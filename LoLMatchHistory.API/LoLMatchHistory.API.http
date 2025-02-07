@@ -1,0 +1,36 @@
+@API_HostAddress = https://localhost:7113
+@credentials = cm9lbkBob3RtYWlsLmNvbTpDdXN0b21lcjE=
+
+### All matches
+GET {{API_HostAddress}}/api/MatchInfo
+Accept: application/json
+Authorization: Basic {{credentials}}
+
+###
+GET {{API_HostAddress}}/api/MatchInfo/v2
+Accept: application/json
+Authorization: Basic {{credentials}}
+
+### Matches by player name
+GET {{API_HostAddress}}/api/MatchInfo/Broxah
+Accept: application/json
+Authorization: Basic {{credentials}}
+
+
+### All kills
+GET {{API_HostAddress}}/api/Kills
+Accept: application/json
+Authorization: Basic {{credentials}}
+
+### Kills by player
+GET {{API_HostAddress}}/api/Kills/Broxah
+Accept: application/json
+Authorization: Basic {{credentials}}
+
+### Deaths by player
+GET {{API_HostAddress}}/api/Kills/deaths/Broxah
+Accept: application/json
+Authorization: Basic {{credentials}}
+
+
+### GoldDiff
