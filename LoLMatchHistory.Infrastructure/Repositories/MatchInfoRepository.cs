@@ -24,7 +24,9 @@ public class MatchInfoRepository(LoLMatchHistoryContext context)
             .Include(m => m.Kills)
             .Include(m => m.Gold)
             .Include(m => m.Structures)
-            .Include(m => m.Monsters);
+            .Include(m => m.Monsters)
+            .AsNoTracking()
+            .AsSplitQuery();
 
         return result;
     }

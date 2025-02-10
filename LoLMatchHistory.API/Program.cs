@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
-string logFileName = @"LoLMatchHistory-" + Guid.NewGuid().ToString() + ".log";
+string logFileName = @"LoLMatchHistory-" + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".log";
 StreamWriter _logStream = new(logFileName, append: true);
 
 var builder = WebApplication.CreateBuilder(args);

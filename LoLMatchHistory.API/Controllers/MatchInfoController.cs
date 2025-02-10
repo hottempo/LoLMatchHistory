@@ -3,6 +3,7 @@ using LoLMatchHistory.API.Models;
 using LoLMatchHistory.Infrastructure.Models;
 using LoLMatchHistory.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace LoLMatchHistory.API.Controllers;
 [ApiController]
@@ -21,13 +22,55 @@ public class MatchInfoController(MatchInfoRepository repository,
     private readonly StructuresRepository _structuresRepository = structuresRepository;
     private readonly MonstersRepository _monstersRepository = monstersRepository;
 
+
     [HttpGet]
+    public async Task<ActionResult<IReadOnlyList<MatchInfoDto>>> GetAll()
+    {
+        var matches = await _repository.GetAll()
+            .Include(m => m.Bans)
+            .Include(m => m.Kills)
+            .Include(m => m.Gold)
+            .Include(m => m.Structures)
+            .Include(m => m.Monsters)
+            .AsNoTracking()
+            .AsSplitQuery()
+            .ToListAsync();
+
+        if (!matches.Any())
+        {
+            return NotFound();
+        }
+
+        var matchesDto = await Task.Run(() => matches.Select(m =>
+        {
+            var dto = m.MapToDto();
+
+            dto.Kills = m.Kills.Select(k => k.MapToDto()).ToList();
+            dto.Bans = m.Bans.Select(b => b.MapToDto()).ToList();
+            dto.Gold = m.Gold.Select(g => g.MapToDto()).ToList();
+            dto.Structures = m.Structures.Select(s => s.MapToDto()).ToList();
+            dto.Monsters = m.Monsters.Select(mo => mo.MapToDto()).ToList();
+
+            return dto;
+        }).ToList());
+
+        return matchesDto;
+    }
+
+
+
+
+
+
+    /*[HttpGet]
     public ActionResult<IReadOnlyList<MatchInfoDto>> GetAll()
     {
         var matches = _repository
             .GetAll()
             .Select(m => m.MapToDto())
+            .AsNoTracking()
             .ToList();
+
         if (!matches.Any())
         {
             return NotFound();
@@ -64,14 +107,47 @@ public class MatchInfoController(MatchInfoRepository repository,
         }
 
         return matches.AsReadOnly();
+    }*/
+
+    [HttpGet("v2")]
+    public ActionResult<List<MatchInfoOptimizedDto>> GetAllOptimized()
+    {
+        var matches = _repository.GetAllCombined()
+            //.Include(m => m.Bans)
+            //.Include(m => m.Kills)
+            .ToList();
+
+        var matchDtos = matches.Select(match => new MatchInfoOptimizedDto
+        {
+            GameHash = match.GameHash,
+            League = match.League,
+            Year = match.Year,
+            Season = match.Season,
+            MatchType = match.Type,
+            RedKills = match.Kills.Count(k => k.Team == "rKills"),
+            BlueKills = match.Kills.Count(k => k.Team == "bKills"),
+            Bans = match.Bans.Select(b => new BansDto
+            {
+                Team = b.Team,
+                Ban1 = b.Ban1,
+                Ban2 = b.Ban2,
+                Ban3 = b.Ban3,
+                Ban4 = b.Ban4,
+                Ban5 = b.Ban5
+            }).ToList()
+        }).ToList();
+
+        return Ok(matchDtos);
     }
+
 
     /// <summary>
     /// TODO Revisit this in the future. We should be able to do this
     /// 
     /// </summary>
     /// <returns></returns>
-    [HttpGet("v2")]
+    /// 
+    /*[HttpGet("v2")]
     public ActionResult<List<MatchInfoOptimizedDto>> GetAllOptimized()
     {
         var matches = _repository.GetAllCombined().ToList();
@@ -109,7 +185,7 @@ public class MatchInfoController(MatchInfoRepository repository,
         }
 
         return Ok(matchDtos);
-    }
+    }*/
 
     [HttpGet("{playerName}")]
     public ActionResult<List<MatchInfoDto>> GetByPlayerName(string playerName)
