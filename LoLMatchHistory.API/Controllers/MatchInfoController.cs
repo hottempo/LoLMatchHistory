@@ -41,7 +41,8 @@ public class MatchInfoController(MatchInfoRepository repository,
             return NotFound();
         }
 
-        var matchesDto = await Task.Run(() => matches.Select(m =>
+        var matchesDto = matches
+            .Select(m =>
         {
             var dto = m.MapToDto();
 
@@ -52,15 +53,10 @@ public class MatchInfoController(MatchInfoRepository repository,
             dto.Monsters = m.Monsters.Select(mo => mo.MapToDto()).ToList();
 
             return dto;
-        }).ToList());
+        }).ToList();
 
-        return matchesDto;
+        return Ok(matchesDto);
     }
-
-
-
-
-
 
     /*[HttpGet]
     public ActionResult<IReadOnlyList<MatchInfoDto>> GetAll()
@@ -110,35 +106,56 @@ public class MatchInfoController(MatchInfoRepository repository,
     }*/
 
     [HttpGet("v2")]
-    public ActionResult<List<MatchInfoOptimizedDto>> GetAllOptimized()
+    public async Task<ActionResult<List<MatchInfoOptimizedDto>>> GetAllOptimized()
     {
-        var matches = _repository.GetAllCombined()
-            //.Include(m => m.Bans)
-            //.Include(m => m.Kills)
+        var matches = await _repository.GetAllOptimized().ToListAsync();
+
+        if (!matches.Any())
+        {
+            return NotFound();
+        }
+
+        var matchesDto = matches
+            .GroupBy(m => m.GameHash)
+            .Select(group =>
+            {
+                var dto = group.First().MapToDto();
+
+                dto.Bans = group.Select(b => BansMapper.MapToDto(b)).ToList();
+
+                return dto;
+            })
             .ToList();
 
-        var matchDtos = matches.Select(match => new MatchInfoOptimizedDto
-        {
-            GameHash = match.GameHash,
-            League = match.League,
-            Year = match.Year,
-            Season = match.Season,
-            MatchType = match.Type,
-            RedKills = match.Kills.Count(k => k.Team == "rKills"),
-            BlueKills = match.Kills.Count(k => k.Team == "bKills"),
-            Bans = match.Bans.Select(b => new BansDto
-            {
-                Team = b.Team,
-                Ban1 = b.Ban1,
-                Ban2 = b.Ban2,
-                Ban3 = b.Ban3,
-                Ban4 = b.Ban4,
-                Ban5 = b.Ban5
-            }).ToList()
-        }).ToList();
-
-        return Ok(matchDtos);
+        return Ok(matchesDto);
     }
+
+
+
+
+
+    /*var matchDtos = matches.Select(match => new MatchInfoOptimizedDto
+    {
+        GameHash = match.GameHash,
+        League = match.League,
+        Year = match.Year,
+        Season = match.Season,
+        MatchType = match.Type,
+        RedKills = match.Kills.Count(k => k.Team == "rKills"),
+        BlueKills = match.Kills.Count(k => k.Team == "bKills"),
+        Bans = match.Bans.Select(b => new BansDto
+        {
+            Team = b.Team,
+            Ban1 = b.Ban1,
+            Ban2 = b.Ban2,
+            Ban3 = b.Ban3,
+            Ban4 = b.Ban4,
+            Ban5 = b.Ban5
+        }).ToList()
+    }).ToList();
+
+    return Ok(matchDtos);*/
+
 
 
     /// <summary>

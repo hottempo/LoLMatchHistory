@@ -19,7 +19,7 @@ public class MatchInfoRepository(LoLMatchHistoryContext context)
     /// <returns></returns>
     public IQueryable<MatchInfo> GetAllCombined()
     {
-        var result = _context.Matches
+        return _context.Matches
             .Include(m => m.Bans)
             .Include(m => m.Kills)
             .Include(m => m.Gold)
@@ -28,8 +28,14 @@ public class MatchInfoRepository(LoLMatchHistoryContext context)
             .AsNoTracking()
             .AsSplitQuery();
 
-        return result;
+        // return result;
     }
+
+    public IQueryable<MatchInfoOptimizedView> GetAllOptimized()
+    {
+        return _context.MatchInfoOptimized.AsNoTracking();
+    }
+
 
     public IQueryable<MatchInfo> GetMatchesByPlayer(string playerName)
     {
