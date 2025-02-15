@@ -52,5 +52,5 @@ public class MatchInfoOptimizedDto
     public int TotalKills => RedKills + BlueKills;
     public int RedKills { get; init; }
     public int BlueKills { get; init; }
-    public List<BansDto> Bans { get; init; } = [];
+    public List<BansDto> Bans { get; set; } = new();
 }

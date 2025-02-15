@@ -49,6 +49,10 @@ public class LoLMatchHistoryContext(DbContextOptions<LoLMatchHistoryContext> con
             .HasForeignKey(m => m.GameHash)
             .HasConstraintName("FK_Structure_MatchInfo");
 
+        modelBuilder.Entity<MatchInfoOptimizedView>()
+            .ToView("MatchInfoOptimizedView")
+            .HasNoKey();
+
     }
 
     public DbSet<MatchInfo> Matches { get; set; }
@@ -58,5 +62,6 @@ public class LoLMatchHistoryContext(DbContextOptions<LoLMatchHistoryContext> con
     public DbSet<Monster> Monsters { get; set; }
     public DbSet<Structure> Structures { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<MatchInfoOptimizedView> MatchInfoOptimized { get; set; }
 
 }
