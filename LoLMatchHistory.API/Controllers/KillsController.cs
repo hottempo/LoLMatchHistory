@@ -3,7 +3,6 @@ using LoLMatchHistory.API.Models;
 using LoLMatchHistory.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.ObjectModel;
 
 namespace LoLMatchHistory.API.Controllers;
 [Route("api/[controller]")]
@@ -27,30 +26,49 @@ public class KillsController(KillsRepository repository) : ControllerBase
         return Ok(matches);
     }
 
-    [HttpGet("{playerName}")]
-    public ActionResult<List<KillDto>> GetKillsByPlayerName(string playerName)
+    [HttpGet("game/{gamehash}")]
+    public async Task<ActionResult<IReadOnlyList<KillDto>>> GetKillsByGameHash(string gamehash)
     {
-        var matches = _repository.GetAllKillsByPlayer(playerName).Select(k => k.MapToDto()).ToList();
+        var matches = await _repository.GetByGameHash(gamehash)
+            .Select(k => k.MapToDto())
+            .ToListAsync(); ;
 
         if (!matches.Any())
         {
-            return NoContent();
+            return NotFound();
         }
 
-        return matches;
+        return Ok(matches);
+    }
+
+
+    [HttpGet("{playerName}")]
+    public async Task<ActionResult<IReadOnlyList<KillDto>>> GetKillsByPlayerName(string playerName)
+    {
+        var matches = await _repository.GetAllKillsByPlayer(playerName)
+            .Select(k => k.MapToDto())
+            .ToListAsync();
+
+        if (!matches.Any())
+        {
+            return NotFound();
+        }
+
+        return Ok(matches);
     }
 
     [HttpGet("deaths/{playerName}")]
-    public ActionResult<List<KillDto>> GetDeathsByPlayerName(string playerName)
+    public async Task<ActionResult<IReadOnlyList<KillDto>>> GetDeathsByPlayerName(string playerName)
     {
-        var matches = _repository.GetAllDeathsByPlayer(playerName);
+        var matches = await _repository.GetAllDeathsByPlayer(playerName)
+            .Select(k => k.MapToDto())
+            .ToListAsync();
 
         if (!matches.Any())
         {
-            return NoContent();
+            return NotFound();
         }
 
-        return matches.Select(k => k.MapToDto()).ToList();
+        return Ok(matches);
     }
-
 }
