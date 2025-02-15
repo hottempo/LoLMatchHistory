@@ -4,6 +4,7 @@ using LoLMatchHistory.Infrastructure.Models;
 using LoLMatchHistory.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace LoLMatchHistory.API.Controllers;
 [ApiController]
@@ -27,13 +28,13 @@ public class MatchInfoController(MatchInfoRepository repository,
     public async Task<ActionResult<IReadOnlyList<MatchInfoDto>>> GetAll()
     {
         var matches = await _repository.GetAll()
-            .Include(m => m.Bans)
+            /*.Include(m => m.Bans)
             .Include(m => m.Kills)
             .Include(m => m.Gold)
             .Include(m => m.Structures)
             .Include(m => m.Monsters)
             .AsNoTracking()
-            .AsSplitQuery()
+            .AsSplitQuery() */
             .ToListAsync();
 
         if (!matches.Any())
@@ -106,9 +107,10 @@ public class MatchInfoController(MatchInfoRepository repository,
     }*/
 
     [HttpGet("v2")]
-    public async Task<ActionResult<List<MatchInfoOptimizedDto>>> GetAllOptimized()
+    public async Task<ActionResult<IReadOnlyList<MatchInfoOptimizedDto>>> GetAllOptimized()
     {
-        var matches = await _repository.GetAllOptimized().ToListAsync();
+        var matches = await _repository.GetAllOptimized()
+            .ToListAsync();
 
         if (!matches.Any())
         {
@@ -124,15 +126,10 @@ public class MatchInfoController(MatchInfoRepository repository,
                 dto.Bans = group.Select(b => BansMapper.MapToDto(b)).ToList();
 
                 return dto;
-            })
-            .ToList();
+            }).ToList();
 
         return Ok(matchesDto);
     }
-
-
-
-
 
     /*var matchDtos = matches.Select(match => new MatchInfoOptimizedDto
     {
@@ -155,8 +152,6 @@ public class MatchInfoController(MatchInfoRepository repository,
     }).ToList();
 
     return Ok(matchDtos);*/
-
-
 
     /// <summary>
     /// TODO Revisit this in the future. We should be able to do this
@@ -205,18 +200,34 @@ public class MatchInfoController(MatchInfoRepository repository,
     }*/
 
     [HttpGet("{playerName}")]
-    public ActionResult<List<MatchInfoDto>> GetByPlayerName(string playerName)
+    public async Task<ActionResult<IReadOnlyList<MatchInfoDto>>> GetByPlayerName(string playerName)
     {
-        var matches = _repository
-            .GetMatchesByPlayer(playerName)
-            .Select(m => m.MapToDto())
-            .ToList();
+        var matches = await _repository.GetMatchesByPlayer(playerName)
+            //.Select(m => m.MapToDto())
+            .ToListAsync();
+
         if (!matches.Any())
         {
             return NotFound();
         }
 
-        foreach (var match in matches)
+        var matchesDto = matches
+            .Select(m =>
+            {
+                var dto = m.MapToDto();
+
+                dto.Kills = m.Kills.Select(k => k.MapToDto()).ToList();
+                dto.Bans = m.Bans.Select(b => b.MapToDto()).ToList();
+                dto.Gold = m.Gold.Select(g => g.MapToDto()).ToList();
+                dto.Structures = m.Structures.Select(s => s.MapToDto()).ToList();
+                dto.Monsters = m.Monsters.Select(mo => mo.MapToDto()).ToList();
+
+                return dto;
+            }).ToList();
+
+        return Ok(matchesDto);
+
+        /*foreach (var match in matches)
         {
             var bans = _bansRepository.GetByGameHash(match.GameHash).Select(b => b.MapToDto()).ToList();
             match.Bans = bans;
@@ -246,7 +257,7 @@ public class MatchInfoController(MatchInfoRepository repository,
             match.Monsters = monsters;
         }
 
-        return matches;
+        return matches;*/
     }
 
 }

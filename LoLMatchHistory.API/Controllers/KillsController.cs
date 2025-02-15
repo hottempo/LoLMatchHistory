@@ -2,6 +2,7 @@
 using LoLMatchHistory.API.Models;
 using LoLMatchHistory.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 
 namespace LoLMatchHistory.API.Controllers;
@@ -12,14 +13,18 @@ public class KillsController(KillsRepository repository) : ControllerBase
     private readonly KillsRepository _repository = repository;
 
     [HttpGet]
-    public ActionResult<ReadOnlyCollection<KillDto>> GetAll()
+    public async Task<ActionResult<IReadOnlyList<KillDto>>> GetAll()
     {
-        var matches = _repository
-            .GetAll()
+        var matches = await _repository.GetAll()
             .Select(k => k.MapToDto())
-            .ToList();
+            .ToListAsync();
 
-        return matches.AsReadOnly();
+        if (!matches.Any())
+        {
+            return NotFound();
+        }
+
+        return Ok(matches);
     }
 
     [HttpGet("{playerName}")]

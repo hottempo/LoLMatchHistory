@@ -1,4 +1,5 @@
 ﻿using LoLMatchHistory.Infrastructure.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace LoLMatchHistory.Infrastructure.Repositories;
 public class KillsRepository(LoLMatchHistoryContext context)
@@ -7,7 +8,8 @@ public class KillsRepository(LoLMatchHistoryContext context)
 
     public IQueryable<Kill> GetAll()
     {
-        return _context.Kills;
+        return _context.Kills
+            .AsNoTracking();
     }
 
     public IQueryable<Kill> GetAllKillsByPlayer(string playerName)
