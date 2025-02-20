@@ -63,5 +63,6 @@ public class LoLMatchHistoryContext(DbContextOptions<LoLMatchHistoryContext> con
     public DbSet<Structure> Structures { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<MatchInfoOptimizedView> MatchInfoOptimized { get; set; }
+    public DbSet<ApiRequestLog> ApiRequestLogs { get; set; }
 
 }

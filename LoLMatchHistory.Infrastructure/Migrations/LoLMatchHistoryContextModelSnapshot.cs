@@ -64,7 +64,7 @@ namespace LoLMatchHistory.Infrastructure.Migrations
 
                     b.HasIndex("GameHash");
 
-                    b.ToTable("Bans");
+                    b.ToTable("Bans", (string)null);
                 });
 
             modelBuilder.Entity("LoLMatchHistory.Infrastructure.Models.Gold", b =>
@@ -372,7 +372,7 @@ namespace LoLMatchHistory.Infrastructure.Migrations
 
                     b.HasIndex("GameHash");
 
-                    b.ToTable("Gold");
+                    b.ToTable("Gold", (string)null);
                 });
 
             modelBuilder.Entity("LoLMatchHistory.Infrastructure.Models.Kill", b =>
@@ -432,7 +432,7 @@ namespace LoLMatchHistory.Infrastructure.Migrations
 
                     b.HasIndex("GameHash");
 
-                    b.ToTable("Kills");
+                    b.ToTable("Kills", (string)null);
                 });
 
             modelBuilder.Entity("LoLMatchHistory.Infrastructure.Models.MatchInfo", b =>
@@ -585,7 +585,7 @@ namespace LoLMatchHistory.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Matches");
+                    b.ToTable("Matches", (string)null);
                 });
 
             modelBuilder.Entity("LoLMatchHistory.Infrastructure.Models.Monster", b =>
@@ -618,7 +618,7 @@ namespace LoLMatchHistory.Infrastructure.Migrations
 
                     b.HasIndex("GameHash");
 
-                    b.ToTable("Monsters");
+                    b.ToTable("Monsters", (string)null);
                 });
 
             modelBuilder.Entity("LoLMatchHistory.Infrastructure.Models.Structure", b =>
@@ -654,7 +654,7 @@ namespace LoLMatchHistory.Infrastructure.Migrations
 
                     b.HasIndex("GameHash");
 
-                    b.ToTable("Structures");
+                    b.ToTable("Structures", (string)null);
                 });
 
             modelBuilder.Entity("LoLMatchHistory.Infrastructure.Models.User", b =>
@@ -673,7 +673,7 @@ namespace LoLMatchHistory.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("LoLMatchHistory.Infrastructure.Models.Bans", b =>
