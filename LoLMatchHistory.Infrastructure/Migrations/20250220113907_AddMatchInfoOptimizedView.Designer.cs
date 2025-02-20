@@ -4,6 +4,7 @@ using LoLMatchHistory.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,41 +12,18 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LoLMatchHistory.Infrastructure.Migrations
 {
     [DbContext(typeof(LoLMatchHistoryContext))]
-    partial class LoLMatchHistoryContextModelSnapshot : ModelSnapshot
+    [Migration("20250220113907_AddMatchInfoOptimizedView")]
+    partial class AddMatchInfoOptimizedView
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.1")
+                .HasAnnotation("ProductVersion", "8.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("LoLMatchHistory.Infrastructure.Models.ApiRequestLog", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<long>("DurationMilliseconds")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Endpoint")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("RequestDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ApiRequestLogs");
-                });
 
             modelBuilder.Entity("LoLMatchHistory.Infrastructure.Models.Bans", b =>
                 {

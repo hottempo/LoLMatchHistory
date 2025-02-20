@@ -34,6 +34,7 @@ builder.Services.AddScoped<BansRepository>();
 builder.Services.AddScoped<GoldRepository>();
 builder.Services.AddScoped<MonstersRepository>();
 builder.Services.AddScoped<StructuresRepository>();
+builder.Services.AddScoped<ApiRequestLogRepository>();
 
 var app = builder.Build();
 

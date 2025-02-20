@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using System.IO;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 
 namespace LoLMatchHistory.Infrastructure
 {
