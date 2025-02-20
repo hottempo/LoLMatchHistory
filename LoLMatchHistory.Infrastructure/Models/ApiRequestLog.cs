@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LoLMatchHistory.Infrastructure.Models
 {
@@ -11,8 +12,8 @@ namespace LoLMatchHistory.Infrastructure.Models
         [Required]
         public string UserId { get; set; } = string.Empty;
 
-        [Required]
-        public DateTime RequestDate { get; set; } = DateTime.UtcNow;
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public DateTime RequestDate { get; init; }
 
         [Required]
         public string Endpoint { get; set; } = string.Empty;

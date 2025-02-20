@@ -53,6 +53,10 @@ public class LoLMatchHistoryContext(DbContextOptions<LoLMatchHistoryContext> con
             .ToView("MatchInfoOptimizedView")
             .HasNoKey();
 
+        modelBuilder.Entity<ApiRequestLog>()
+            .Property(d => d.RequestDate)
+            .HasDefaultValueSql("GETDATE()");
+
     }
 
     public DbSet<MatchInfo> Matches { get; set; }

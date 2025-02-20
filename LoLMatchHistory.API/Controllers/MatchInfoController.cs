@@ -50,7 +50,6 @@ public class MatchInfoController(MatchInfoRepository repository,
         var log = new ApiRequestLog
         {
             UserId = userId,
-            RequestDate = DateTime.UtcNow,
             Endpoint = endpoint,
             DurationMilliseconds = duration
         };
